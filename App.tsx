@@ -1,20 +1,72 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { Text } from "react-native";
+import {
+  useFonts as useOswald,
+  Oswald_400Regular,
+} from "@expo-google-fonts/oswald";
+import { useFonts as useLato, Lato_400Regular } from "@expo-google-fonts/lato";
+import RestaurantsScreen from "./src/features/restaurants/screens/restaurants.screen";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
 
-export default function App() {
+const TAB_ICON = {
+  Restaurants: "restaurant",
+  Map: "map",
+  Settings: "settings",
+};
+const Tab = createBottomTabNavigator();
+const Map = () => {
+  return <Text>Map</Text>;
+};
+const Settings = () => {
+  return <Text>Settings</Text>;
+};
+const createScreenOptions = ({ route }:{route:{name:string}}) => {
+  const iconName = TAB_ICON[route.name];
+  return {
+    headerShown:false,
+    tabBarIcon: () => (
+      <Ionicons name={iconName} size={24} color="black" />
+    ),
+  };
+};
+
+function MyTabs() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your dff app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Tab.Navigator
+      screenOptions={createScreenOptions}
+      tabBarOptions={{
+        activeTintColor: "tomato",
+        inactiveTintColor: "gray",
+      }}
+    >
+      <Tab.Screen name="Restaurants" component={RestaurantsScreen} />
+      <Tab.Screen name="Map" component={Map} />
+      <Tab.Screen name="Settings" component={Settings} />
+    </Tab.Navigator>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  let [OswaldLoaded] = useOswald({
+    Oswald_400Regular,
+  });
+  let [LatoLoaded] = useLato({
+    Lato_400Regular,
+  });
+  if (!OswaldLoaded) {
+    console.log("not loaded");
+    return null;
+  }
+  if (!LatoLoaded) {
+    console.log("not loaded");
+    return null;
+  }
+
+  return (
+    <NavigationContainer>
+      <MyTabs />
+    </NavigationContainer>
+  );
+}
