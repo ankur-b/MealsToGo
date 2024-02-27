@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState,useContext } from "react";
 import { Searchbar } from "react-native-paper";
 import { ImageURISource, StyleSheet, FlatList, View } from "react-native";
 import RestaurantInfo from "../components/restaurant-info.component";
 import { theme } from "../../../utils";
+import { RestaurantsContext } from "../../../services/restaurents/restaurants.context";
 
 const RestaurantsScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const {restaurants,isLoading,error} = useContext(RestaurantsContext)
   return (
     <View style={styles.container}>
       <View style={styles.search}>
@@ -17,30 +19,21 @@ const RestaurantsScreen = () => {
       </View>
       <View style={styles.list}>
         <FlatList
-          data={[
-            { name: 1 },
-            { name: 2 },
-            { name: 3 },
-            { name: 4 },
-            { name: 5 },
-            { name: 6 },
-            { name: 7 },
-          ]}
-          renderItem={() => (
-            <RestaurantInfo
+          data={restaurants}
+          renderItem={({item}) => {
+            return <RestaurantInfo
+            key={item.name}
               restaurant={{
-                name: "Some Restaurant",
-                icon: "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/lodging-71.png" as ImageURISource,
+                name: item.name,
+                icon: item.icon as ImageURISource,
                 address: "100 some random street",
-                photos: [
-                  "https://www.foodiesfeed.com/wp-content/uploads/2019/06/top-view-for-box-of-2-burgers-home-made-600x899.jpg" as ImageURISource,
-                ],
-                isOpenNow: true,
-                rating: 4,
-                isClosedTemporarily: true,
+                photos: item.photos,
+                isOpenNow: item.isOpenNow,
+                rating: item.rating,
+                isClosedTemporarily: item.isClosedTemporarily,
               }}
             />
-          )}
+          }}
           contentContainerStyle={{
             marginBottom: 20,
           }}
@@ -57,13 +50,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 20,
-    marginBottom:20,
+    marginBottom: 20,
   },
   search: {
     padding: theme.space[3],
   },
   list: {
-    flex:1,
+    flex: 1,
     padding: theme.space[3],
   },
 });

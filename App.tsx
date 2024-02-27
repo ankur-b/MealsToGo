@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useContext} from "react";
 import { Text } from "react-native";
 import {
   useFonts as useOswald,
@@ -6,14 +6,18 @@ import {
 } from "@expo-google-fonts/oswald";
 import { useFonts as useLato, Lato_400Regular } from "@expo-google-fonts/lato";
 import RestaurantsScreen from "./src/features/restaurants/screens/restaurants.screen";
-import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { NavigationContainer, RouteProp } from "@react-navigation/native";
+import {
+  createBottomTabNavigator,
+  BottomTabNavigationProp,
+} from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
+import { RestaurantsContextProvider } from "./src/services/restaurents/restaurants.context";
 
 const TAB_ICON = {
-  Restaurants: "restaurant",
-  Map: "map",
-  Settings: "settings",
+  Restaurants: "restaurant" as keyof typeof Ionicons.glyphMap,
+  Map: "map" as keyof typeof Ionicons.glyphMap,
+  Settings: "settings" as keyof typeof Ionicons.glyphMap,
 };
 const Tab = createBottomTabNavigator();
 const Map = () => {
@@ -22,25 +26,18 @@ const Map = () => {
 const Settings = () => {
   return <Text>Settings</Text>;
 };
-const createScreenOptions = ({ route }:{route:{name:string}}) => {
-  const iconName = TAB_ICON[route.name];
+const createScreenOptions = (props: any) => {
+  const iconName = TAB_ICON[props.route.name as keyof TabParamList];
   return {
-    headerShown:false,
-    tabBarIcon: () => (
-      <Ionicons name={iconName} size={24} color="black" />
-    ),
+    headerShown: false,
+    tabBarIcon: () => <Ionicons name={iconName} size={24} color="black" />,
+    tabBarActiveTintColor: "tomato",
+    tabBarInactiveTintColor: "gray",
   };
 };
-
 function MyTabs() {
   return (
-    <Tab.Navigator
-      screenOptions={createScreenOptions}
-      tabBarOptions={{
-        activeTintColor: "tomato",
-        inactiveTintColor: "gray",
-      }}
-    >
+    <Tab.Navigator screenOptions={createScreenOptions}>
       <Tab.Screen name="Restaurants" component={RestaurantsScreen} />
       <Tab.Screen name="Map" component={Map} />
       <Tab.Screen name="Settings" component={Settings} />
@@ -65,8 +62,15 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <MyTabs />
-    </NavigationContainer>
+    <RestaurantsContextProvider>
+      <NavigationContainer>
+        <MyTabs />
+      </NavigationContainer>
+    </RestaurantsContextProvider>
   );
 }
+type TabParamList = {
+  Restaurants: { name: string };
+  Map: { name: string };
+  Settings: { name: string };
+};
