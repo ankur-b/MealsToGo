@@ -1,4 +1,4 @@
-import React,{useContext} from "react";
+import React from "react";
 import { Text } from "react-native";
 import {
   useFonts as useOswald,
@@ -13,6 +13,7 @@ import {
 } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { RestaurantsContextProvider } from "./src/services/restaurents/restaurants.context";
+import { LocationContextProvider } from "./src/services/location/location.context";
 
 const TAB_ICON = {
   Restaurants: "restaurant" as keyof typeof Ionicons.glyphMap,
@@ -62,11 +63,13 @@ export default function App() {
   }
 
   return (
+    <LocationContextProvider>
     <RestaurantsContextProvider>
       <NavigationContainer>
         <MyTabs />
       </NavigationContainer>
     </RestaurantsContextProvider>
+    </LocationContextProvider>
   );
 }
 type TabParamList = {

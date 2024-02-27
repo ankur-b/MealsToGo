@@ -12,7 +12,6 @@ const RestaurantInfo = ({ restaurant }: { restaurant: restaurant }) => {
     <View style={styles.bg}>
       <Card style={styles.card}>
         <Card.Cover
-          key={restaurant.name as Key}
           style={styles.cover}
           source={{ uri: restaurant.photos[0] as string }}
         />
